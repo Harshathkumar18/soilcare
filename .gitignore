@@ -1,0 +1,25 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Local Environment Variables & Secrets
+.env
+!.env.example
+
+# SQLite Database
+*.db
+*.sqlite3
+
+# Uploaded User Reports (keep uploads directory)
+uploads/*
+!uploads/.gitkeep
+
+# IDE configuration
+.vscode/
+.idea/

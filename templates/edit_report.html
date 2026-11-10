@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}Edit Soil Report #{{ record.id }}{% endblock %}
+
+{% block content %}
+<div style="background:var(--grad-hero);padding:var(--space-12) 0 var(--space-8);border-bottom:1px solid var(--clr-dark-border);">
+  <div class="container">
+    <div class="section-badge" style="margin-bottom:var(--space-4);"><i class="fa-solid fa-pen-to-square"></i> Edit Soil Health Card</div>
+    <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:var(--space-2);">Edit Report #SV-{{ "%05d"|format(record.id) }}</h1>
+    <p class="text-muted" style="max-width:620px;">Update soil measurements or farm details below. Saving recalculates your ICAR Soil Health Score and Smart Soil Prescription automatically.</p>
+  </div>
+</div>
+
+<section class="section-pad">
+  <div class="container container-md">
+    <div class="card">
+      <form method="POST" action="{{ url_for('edit_report', record_id=record.id) }}">
+        <h3 style="margin-bottom:var(--space-5);"><i class="fa-solid fa-tractor" style="color:var(--clr-primary-light);"></i> Farm &amp; Crop Details</h3>
+        <div class="grid grid-2" style="margin-bottom:var(--space-6);">
+          <div class="form-group">
+            <label class="form-label" for="farmer_name">Farmer / Farm Name</label>
+            <input type="text" class="form-control" id="farmer_name" name="farmer_name" value="{{ record.farmer_name or '' }}" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="target_crop">Target Crop</label>
+            <select class="form-control" id="target_crop" name="target_crop">
+              <option value="General Farming" {% if not record.target_crop or record.target_crop == 'General Farming' %}selected{% endif %}>General Farming</option>
+              {% for crop in crops_list %}
+              <option value="{{ crop }}" {% if record.target_crop == crop %}selected{% endif %}>{{ crop }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="state">State</label>
+            <input type="text" class="form-control" id="state" name="state" value="{{ record.state or '' }}" maxlength="100">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="district">District</label>
+            <input type="text" class="form-control" id="district" name="district" value="{{ record.district or '' }}" maxlength="100">
+          </div>
+          <div class="form-group" style="grid-column:span 2;">
+            <label class="form-label" for="soil_type">Soil Type / Texture</label>
+            <input type="text" class="form-control" id="soil_type" name="soil_type" value="{{ record.soil_type or '' }}" maxlength="100" placeholder="e.g. Black Clay (Regur), Red Sandy Loam, Alluvial Loam">
+          </div>
+        </div>
+
+        <h3 style="margin-bottom:var(--space-5);"><i class="fa-solid fa-vial" style="color:var(--clr-primary-light);"></i> Soil Chemical &amp; Physical Parameters</h3>
+        <div class="grid grid-3 grid-auto" style="margin-bottom:var(--space-6);">
+          <div class="form-group">
+            <label class="form-label" for="ph">Soil pH</label>
+            <input type="number" step="0.01" min="0" max="14" class="form-control" id="ph" name="ph" value="{{ record.ph if record.ph is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ec">EC (dS/m)</label>
+            <input type="number" step="0.01" min="0" max="50" class="form-control" id="ec" name="ec" value="{{ record.ec if record.ec is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="oc">Organic Carbon (%)</label>
+            <input type="number" step="0.01" min="0" max="15" class="form-control" id="oc" name="oc" value="{{ record.oc if record.oc is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nitrogen">Nitrogen (kg/ha)</label>
+            <input type="number" step="0.1" min="0" class="form-control" id="nitrogen" name="nitrogen" value="{{ record.nitrogen if record.nitrogen is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phosphorus">Phosphorus (kg/ha)</label>
+            <input type="number" step="0.1" min="0" class="form-control" id="phosphorus" name="phosphorus" value="{{ record.phosphorus if record.phosphorus is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="potassium">Potassium (kg/ha)</label>
+            <input type="number" step="0.1" min="0" class="form-control" id="potassium" name="potassium" value="{{ record.potassium if record.potassium is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="moisture">Moisture (%)</label>
+            <input type="number" step="0.1" min="0" max="100" class="form-control" id="moisture" name="moisture" value="{{ record.moisture if record.moisture is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="temperature">Temperature (&deg;C)</label>
+            <input type="number" step="0.1" min="-10" max="65" class="form-control" id="temperature" name="temperature" value="{{ record.temperature if record.temperature is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="zinc">Zinc (ppm)</label>
+            <input type="number" step="0.01" min="0" class="form-control" id="zinc" name="zinc" value="{{ record.zinc if record.zinc is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="iron">Iron (ppm)</label>
+            <input type="number" step="0.01" min="0" class="form-control" id="iron" name="iron" value="{{ record.iron if record.iron is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sulphur">Sulphur (ppm)</label>
+            <input type="number" step="0.01" min="0" class="form-control" id="sulphur" name="sulphur" value="{{ record.sulphur if record.sulphur is not none else '' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="boron">Boron (ppm)</label>
+            <input type="number" step="0.01" min="0" class="form-control" id="boron" name="boron" value="{{ record.boron if record.boron is not none else '' }}">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:var(--space-6);">
+          <label class="form-label" for="notes">Field Notes</label>
+          <textarea class="form-control" id="notes" name="notes" rows="3" maxlength="500">{{ record.notes or '' }}</textarea>
+        </div>
+
+        <div style="display:flex;gap:var(--space-3);justify-content:flex-end;flex-wrap:wrap;">
+          <a href="{{ url_for('view_report', record_id=record.id) }}" class="btn btn-secondary">
+            <i class="fa-solid fa-xmark"></i> Cancel
+          </a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-floppy-disk"></i> Save &amp; Re-Analyze
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
